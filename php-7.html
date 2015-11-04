@@ -1,0 +1,125 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : Base de données</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/php-7.jpg" class="img-responsive">
+        </div>
+        <div class="col-md-6">
+          <h1>PHP</h1>
+          <h2>Structures conditionnelles</h2>
+          <hr>
+          <h2>If</h2>
+          <p>La première structure conditionnelle que nous rencontrerons dans un programme est le <code>if</code></p>
+          <p>If permet d'effectuer une opération SI une condition est validée (ou non)</p>
+          <code>
+          &lt;?php<br>
+          $drapeau = true;<br>
+          if($drapeau === false){<br>
+            &nbsp;&nbsp;&nbsp;echo("Le drapeau est FAUX&lt;br>");<br>
+            &nbsp;&nbsp;&nbsp;return false;<br>
+          }<br>
+          $nom = "SALMON";<br>
+          if($nom == "SALMON"){<br>
+            &nbsp;&nbsp;&nbsp;echo("Bonjour Jeremy&lt;br>");<br>
+          }<br>
+          ?&gt;
+          </code>
+          <p class="alert alert-success">
+            Vous remarquerez qu'a l'intérieur des <code>{}</code> le code n'est pas au bord de la page. C'est l'indendation. Il est très important d'indenter son code correctement pour plus de lisibilité et pour profiter des fonctions de votre éditeur de texte.
+            <br>
+            Lisibilité : d'un coup d'oeil vous pouvez voir ce qui fait parti de votre <code>if</code> par exemple.
+            <br>
+            Editeur : Sublime Text par exemple vous permet de "fermer" et d'"ouvrir" les codes indentés.
+          </p>
+          <p class="alert alert-danger">
+            Il est fortement DECONSEILLE d'imbriquer des <code>if</code> dans votre code. En effet, vous arriverez vite à des codes "spaghetti" difficilement maintenable.<br>
+            Dans tous les languages il existe des structures conditionnelles qui vous permettent d'avoir à imbriquer des <code>if</code>
+          </p>
+          <p>Il arrive souvent que vous ayez à tester plusieurs conditions dans un <code>if</code></p>
+          <p>Par exemple si l'animal est un CHIEN <code>ET</code> qu'il est de race "CANICHE" alors on fait une action</p>
+          <code>
+            &lt;?php<br>
+            $animal = "chien";<br>
+            $race = "doberman";<br>
+            if($animal == "chien" && $race == "caniche"){<br>
+            &nbsp;&nbsp;&nbsp;echo("Bienvenue caniche");<br>
+            &nbsp;&nbsp;&nbsp;return false;<br>
+            }<br>
+            echo("Il n'y a que les caniches qui sont autorisés !");<br>
+            ?&gt;
+          </code>
+          <p>Vous pouvez aussi tester si c'est un CHIEN <code>OU</code> un CHAT</p>
+          <code>
+            &lt;?php<br>
+            $animal = "oiseau";<br>
+            if($animal == "chien" || $animal == "chat"){<br>
+            &nbsp;&nbsp;&nbsp;echo("Bienvenue cher animal a quatre pattes");<br>
+            &nbsp;&nbsp;&nbsp;return true;<br>
+            }<br>
+            echo("Il n'y a que les chiens ou les chats qui sont autorisés !");<br>
+            ?&gt;
+          </code>
+          <p>Enfin vous pouvez combiner tous ces tests. Attention, ici la précédence (comme en mathématique) s'applique</p>
+          <code>
+            &lt;?php<br>
+            $animal = "oiseau";<br>
+            $race = "moineau";<br>
+            if(($animal == "chien" || $animal == "chat") || ($animal == "oiseau" && $race == "moineau")){<br>
+            &nbsp;&nbsp;&nbsp;echo("Bienvenue cher animal a quatre pattes. (les moineaux aussi !)");<br>
+            &nbsp;&nbsp;&nbsp;return true;<br>
+            }<br>
+            echo("Il n'y a que les chiens ou les chats qui sont autorisés !");<br>
+            ?&gt;
+          </code>
+          <p><a class="btn btn-primary btn-lg" href="php-8.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>

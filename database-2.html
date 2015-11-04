@@ -1,0 +1,84 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : Base de données</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/database-2.jpg" class="img-responsive">
+        </div>
+        <div class="col-md-6">
+          <h1>Base de données</h1>
+          <h2>UML, Merise, OMT, ... différentes méthodes ... différents contextes</h2>
+          <hr>
+          <p>La modélisation de la base de données étant le socle des applications, de nombreuses méthodologies existent permettant à des équipes plus ou moins nombreuses de parler le même language quand il s'agit de la base de données.</p>
+          <p>Ce cours n'a pas pour objectif de vous apprendre une méthode particulière. Notre objectif ne sera donc pas d'être rigoureux quand à une méthodologie particulière mais plutôt de réussir à vous montrer la logique vous permettant de mettre en place des structures de bases solides.</p>
+          <p>Les étapes que nous devons suivre sont</p>
+          <ol>
+            <li>Dégager les entités de l'applications qui deviendront nos tables : (ex : facture, client, note, professeur, classe ...)</li>
+            <li>Pour chaque tables, lister les champs : (ex : pour une table classe on imaginera : nom, description, date début, date fin, ...).</li>
+            <li>Pour chaque champs définir son type. Ils existe de nombreux types de base de champs mais pour notre cours nous ne retiendrons que 
+              <ul>
+                <li>INT : nombre entier positif ou négatif (ex : -10,42,-12365,465852). La valeur minimale est -2147483648, la valeur maximale est 2147483647</li>
+                <li>FLOAT : nombre à virgule (ex : 3.14, 10.23, 196540,45655856)</li>
+                <li>TEXT : Texte (64.000 caractères max)</li>
+                <li>DATETIME : Date et Heure au format AAAA-MM-JJ HH:MM:SS</li>
+              </ul>
+            </li>
+            <li>Pour chaque table, définir les relations (cardinalités) qu'elle entretient avec les autres tables. Ici pour notre cours nous retiendrons deux types de relations :
+              <ul>
+                <li>1 à 1 : une facture appartient à un et un seul client, un client possède de 0 à N facture</li>
+                <li>0 à N : une facture comporte de 0 à N produit, et un produit fait partie de 0 à N facture</li>
+              </ul>
+            </li>
+          </ol>
+          <h2>Félicitations vous venez de créer votre première structure de base de données</h2>
+          <p><a class="btn btn-primary btn-lg" href="database-3.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>

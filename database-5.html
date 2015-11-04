@@ -1,0 +1,78 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : Base de données</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/database-5.jpg" class="img-responsive">
+        </div>
+        <div class="col-md-6">
+          <h1>Base de données</h1>
+          <h2>Installation de votre plateforme</h2>
+          <hr>
+          <p>L'installation d'un serveur gérant le serveur Web, PHP et MySQL est très simple sous Debian.</p>
+          <p>Quand vous êtes en root dans la console tapez : </p>
+		  <code>apt-get install apache2 mysql-server mysql-client php5 libapache2-mod-php5 php5-mysql</code>
+		  <p>Durant l'installation vous aurez à répondre à une question qui vous demandera le mot de passe "root" de la base de données. Pour plus de facilité (mais à ne jamais faire en production) vous pouvez mettre <code>1234</code></p>
+		  <p>Votre serveur web est maintenant opérationnel.</p>
+		  <p>Vous pouvez tester le serveur HTTP en lançant un navigateur et en vous connectant à <code>http://VOTRE_IP_LINUX/</code></p>
+		  <p class="alert alert-success">
+		  	Nous vous conseillons fortement de travailler avec Putty, qui est un client SSH et qui vous apporte un maximum de confort pour vos différentes utilisations de la console Linux.
+		  	Avec Putty vous :
+		  	<ul>
+		  		<li>Bénéficiez d'"ascenseurs" qui vous permettent de remonter dans l'historique</li>
+		  		<li>Pouvez copier/coller dans la console</li>
+		  		<li>Pouvez vous connecter avec plusieurs Putty à la même machine Linux (ex : une fenêtre pour les fichiers de log, une fenêtre pour les commandes, une fenêtre pour éditer des fichiers ...)</li>
+		  	</ul>
+		  	<p>Vous pouvez télécharger Putty à l'adresse : <a href="http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe" target="_BLANK">http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe</a></p>
+		  </p>
+          <p><a class="btn btn-primary btn-lg" href="database-6.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>

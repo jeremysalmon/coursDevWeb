@@ -1,0 +1,74 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : Base de données</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/database-9.jpg" class="img-responsive">
+        </div>
+        <div class="col-md-6">
+          <h1>Base de données</h1>
+          <h2>Insérez des données dans la table</h2>
+          <hr>
+          <p>Nous allons maintenant insérer des données dans la table que nous venons de créer.</p>
+          <p>Pour celà nous allons utiliser la commande SQL INSERT</p>
+          <code>INSERT INTO firstTable VALUES(0,'Premier texte',9.5,'2015-10-01 22:52:36');</code>
+          <h2>Félicitations ! : Vous d'insérez le premier enregistrement dans votre table.</h2>
+          <p>Quelques règles : </p>
+          <ul>
+            <li>un INSERT se fait avec tous les champs de la base</li>
+            <li>Les DATE et TEXT se placent entre ' '</li>
+            <li>Si votre chaîne de caractères contient des ' alors il faut les "échapper" avec \'</li>
+            <li>Le champs auto incrémenté n'a pas besoin de valeur. Vous pouvez lui passer 0, il mettra automatiquement la valeur correcte.</li>
+          </ul>
+          
+          <p><a class="btn btn-primary btn-lg" href="database-10.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>
