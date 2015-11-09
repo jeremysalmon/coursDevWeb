@@ -1,0 +1,145 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : PHP : Les objets</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/php-12.jpg">
+        </div>
+        <div class="col-md-6">
+          <h1>PHP</h1>
+          <h2>Programmation orientée objet</h2>
+          <hr>
+          <p>Vous savez maintenant créer des variables, des tableaux, des fonctions et savez utiliser les structures conditionnnelles et de boucle de PHP.</p>
+          <p>La programmation <a href="https://fr.wikipedia.org/wiki/Programmation_orient%C3%A9e_objet" target="_BLANK">orientée objet</a> va vous permettre de "conceptualiser" les entités de votre application en structure facilement manipulable en PHP.</p>
+          <p>Notre philosohpie de développement và s'orienter autour de <strong>1 table dans la base de données = 1 classe PHP</strong></p>
+          <p>En programmation orientée objet, on appelle <strong>classe</strong> le moule qui correspond à une entité. Quand on <strong>instancie</strong> une classe on créé un <strong>objet</strong>.</p>
+          <p>Une classe est composée de :</p>
+          <ul>
+            <li><code>propriétés</code> : l'équivalent des <strong>champs</strong> de la base de données.</li>
+            <li><code>méthodes</code> : des fonctions internes qui permettent de manipuler les <strong>propriétés</strong> de l'objet instancié</li>
+          </ul>
+          <p>Notre méthode de travail và consister à faire un <i>mirroir</i> des tables de notre base de données.</p>
+          <p>Imaginons une table <code>eleve</code> avec les champs <code>id</code>, <code>nom</code>, <code>prenom</code>, <code>matricule</code>.</p>
+          <p>Nous aurons donc une classe <code>eleve</code> avec les propriétés <code>id</code>, <code>nom</code>, <code>prenom</code>, <code>matricule</code>.</p>
+          <p>Nous prendrons pour habitude de nommer nos classes avec l'extension <code>.class.php</code>. De la même façon, le nom du fichier de chaque classe sera le nom de la classe. N'oubliez pas d'utiliser le lower Camel Case (ex : lowerCamelCase).</p>
+          <p>Créez un fichier <code>/var/www/html/eleve.class.php</code>.</p>
+          <code>
+            &lt;?php<br>
+              class eleve{<br>
+                &nbsp;&nbsp;&nbsp;var $id;<br>
+                &nbsp;&nbsp;&nbsp;var $nom;<br>
+                &nbsp;&nbsp;&nbsp;var $prenom;<br>
+                &nbsp;&nbsp;&nbsp;var $matricule;<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function __construct(){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->id = false;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->nom = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->prenom = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->matricule = '';<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function save(){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$connexion = mysqli_connect('localhost', 'root', '1234', 'test');<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "INSERT INTO eleve VALUES(0,'".$this->nom."','".$this->prenom."','".$this->matricule."')";<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$resultat = mysqli_query($connexion, $sql);<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $resultat;<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function getById($id = false){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$connexion = mysqli_connect('localhost', 'root', '1234', 'test');<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "SELECT * FROM eleve WHERE id=".$id;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$resultat = mysqli_query($connexion, $sql);<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$donnees = mysqli_fetch_assoc($resultat);<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve = new eleve();<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->id = $donnees['id'];<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->nom = $donnees['nom'];<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->prenom = $donnees['prenom'];<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->matricule = $donnees['matricule'];<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $monEleve;<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function getAll(){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$connexion = mysqli_connect('localhost', 'root', '1234', 'test');<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "SELECT * FROM eleve WHERE id=".$id;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$resultat = mysqli_query($connexion, $sql);<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$mesEleves = Array();<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while($donnees = mysqli_fetch_assoc($resultat)){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve = new eleve();<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->id = $donnees['id'];<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->nom = $donnees['nom'];<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->prenom = $donnees['prenom'];<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$monEleve->matricule = $donnees['matricule'];<br>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$mesEleves[] = $monEleve;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $mesEleves;<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+              }<br>
+            ?&gt;
+          </code>
+          <h3>Félicitations ! Vous venez de créer votre première classe.</h3>
+          <p>Vous venez de taper des 10enes de lignes de code. Il y a surement des erreurs de syntaxe qui se sont glissées dans le code. Vous pouvez à partir de la ligne de commande tester si vous avez des erreurs de syntaxe dans le fichier php.</p>
+          <p>Pour celà, dans la console de Linux tapez : </p>
+          <code>
+            cd /var/www/html/<br>
+            php eleve.class.php
+          </code>
+          <p>Si aucune erreur de syntaxe n'est présente dans votre fichier, rien ne s'affichera. Dans le cas contraire vous verrez apparaître le problème et la ligne sur laquelle il a été repéré.</p>
+          <p><a class="btn btn-primary btn-lg" href="php-13.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : PHP : Les objets</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-6">
+          <img src="img/php-14.jpg">
+        </div>
+        <div class="col-md-6">
+          <h1>PHP</h1>
+          <h2>Optimisons notre classe</h2>
+          <hr>
+          <p>Notre classe est opérationnelle, mais ne respecte pas certaines "normes" qui vont nous permettre de faire des programmes maintenables et évolutifs.</p>
+          <p>Nous commencerons par modifier notre code pour</p>
+          <ul>
+            <li>Aucun code ne doit se répéter. S'il y a répétition, il faut créer une fonction.</li>
+            <li>Aucun paramètre variable ne doit être inclus dans le code. Tous les éléments variables (mot de passe, adresse de serveur ...) doivent être inclus dans un fichier de configuration réutilisable.</li>
+            <li>Toutes les fonctions et les méthodes doivent renvoyer un même format</li>
+          </ul>
+
+          <h2>Elements variables dans un fichier de configuration</h2>
+          <p>Nous allons créer le ficher <code>config.inc.php</code>. L'extension <code>.inc.php</code> sera utilisée dans tous nos projets, et indiquera que le fichier est un fichier à <strong>inclure</strong> et n'est pas une classe.</p>
+          <p>Le fichier <code>config.inc.php</code> sera inclus dans la classe à l'aide de <code>require_once('config.class.php');</code> qui sera placé au début du fichier.</p>
+          <p>Pour l'instant nous aurons besoin dans ce fichier de fichier le serveur de base de données, le nom de la base de données, l'utilisateur de la base de données, ainsi que son mot de passe.</p>
+          <p>Nous créerons des <strong>constantes</strong> qui sont des variables "invariables". Pour visuellement faire la différence entre une variable et une constante nous noterons toujours les constantes en majuscules séparées par des _ .</p>
+          <code>
+            &lt;?php<br>
+              &nbsp;&nbsp;&nbsp;define('DB_HOST','localhost');<br>
+              &nbsp;&nbsp;&nbsp;define('DB_USER','root');<br>
+              &nbsp;&nbsp;&nbsp;define('DB_PASS','1234');<br>
+              &nbsp;&nbsp;&nbsp;define('DB_NAME','test');<br>
+            ?&gt;<br>
+          </code>
+          <p>Nous incluerons ensuite ce fichier de configuration dans notre classe à l'aide de <code>require_once('config.inc.php');</code> que nous placerons au début du fichier eleve.class.php</p>
+
+
+          <h2>Pas de répétitions</h2>
+          <p>Dans notre code, nous pouvons voir plusieurs fois la ligne de connexion à la base de données. Nous allons donc créer un méthode pour nous connecter à la base.</p>
+          <p>La technique ou l'on évite les répétitions est appelée DRY (Don't Repeat Yourself) et vous permet d'avoir un code plus lisible et surtout de ne pas avoir un comportement dupliqué qu'il serait difficile de modifier à plusieurs endroits de votre programme.</p>
+          <p>Nous allons donc ajouter une méthode <code>connectDb()</code> à notre classe <code>eleve</code>.</p>
+          <code>
+            function connectDb(){<br>
+              &nbsp;&nbsp;&nbsp;return mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);<br>
+            }
+          </code>
+          <p>Vous remarquerez que nous avons remplacé les éléments codés en dur pour les remplacer par les constantes crées dans notre <code>config.inc.php</code></p>
+
+          <h2>Retour unifié</h2>
+          <p>Plus vos programmes vont avoir de fonctionnalités, plus votre code source va grossir. Il est donc impératif de toujours retourné un même format sans avoir à se demander si on a récupérer un booléen, un objet, un tableau ....</p>
+          <p>Nous allons donc créer une méthode <code>returnResponse</code> qui nous renverra toujours un objet avec : </p>
+          <ul>
+            <li><code>error</code> : un booléen (true il y a une erreur, false tout est ok)</li>
+            <li><code>data</code> : dans la majorité un tableau d'objets de la classe en cours (si error === false) ou le message d'erreur (si error === true)</li>
+          </ul>
+          <p>La méthode <code>returnResponse</code> ressemblera à : </p>
+          <code>
+            function returnResponse($error = false, $data = false){<br>
+              &nbsp;&nbsp;&nbsp;$myReturn = new stdClass();<br>
+              &nbsp;&nbsp;&nbsp;$myReturn->error = $error;<br>
+              &nbsp;&nbsp;&nbsp;$myReturn->data = $data;<br>
+              <br>
+              &nbsp;&nbsp;&nbsp;return $myReturn;<br>
+            }<br>
+          </code>
+
+          <p class="alert alert-success">
+            <strong>A vous de jouer</strong> : nettoyer la classe en appliquant tous ces principes.
+          </p>
+
+          <p><a class="btn btn-primary btn-lg" href="html-1.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>

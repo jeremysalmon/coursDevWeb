@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Cours Développement Web : Base de données</title>
+        <title>Cours Développement Web : PHP : Les objets</title>
         <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -43,21 +43,35 @@
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6">
+          <img src="img/php-12.jpg">
+        </div>
+        <div class="col-md-6">
           <h1>PHP</h1>
-          <h2>A vous de jouer !</h2>
+          <h2>Utilisation des classes</h2>
           <hr>
-          <p>L'objectif est de remplir votre base de données avec des centaines d'enregistrements.</p>
-          <ul>
-            <li>Vous savez créer un tableau associatif. Créez un tableau associatif avec qui contient une "image" des données à insérer.</li>
-            <li>Connectez vous à la base de données en PHP</li>
-            <li>Faites une boucle qui insère tous les enregistrements du tableau dans la base</li>
-          </ul>
-          <p class="alert alert-success">
-            ASTUCE : vous pouvez faire une boucle pour créer votre tableau associatif et ainsi insérer des centaines d'enregistrements facilement.
-          </p>
-          <p>Faîtes une deuxieme page qui affiche l'ensemble des lignes de votre table.</p>
-          <p><a class="btn btn-primary btn-lg" href="php-12.html" role="button">Continuer &raquo;</a></p>
+          <p>Vous avez maintenant une classe <code>eleve</code> stockée dans le fichier <code>eleve.class.php</code>. Cette classe possède 3 méthodes que nous allons pouvoir utiliser pour insérer un nouvel élève dans la base de donnée, récupérer les informations d'un élève à partir de son id et récupérer la liste de l'ensemble des élèves de la base.</p>
+          <p>Pour pouvoir utiliser notre fichier de classe, il va falloir l'<code>inclure</code> dans un fichier PHP</p>
+          <code>
+            &lt;?php<br>
+              require_once('eleve.class.php');<br>
+              <br>
+              /* Création d'un élève dans la base */<br>
+              $monEleve = new eleve();<br>
+              $monEleve->nom = 'Pan';<br>
+              $monEleve->prenom = 'Peter';<br>
+              $monEleve->matricule = 'PP123';<br>
+              <br>
+              $monEleve->save();<br>
+              <br>
+              /* Récupération de tous les élèves de la base */<br>
+              $mesEleves = eleve::getAll();<br>
+              echo('&lt;pre>');<br>
+              &nbsp;&nbsp;&nbsp;print_r($mesEleves);<br>
+              echo('&lt;/pre>'): <br>             
+            ?&gt;<br>
+          </code>
+          <p><a class="btn btn-primary btn-lg" href="php-14.html" role="button">Continuer &raquo;</a></p>
         </div>
       </div>
 
