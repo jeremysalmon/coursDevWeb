@@ -1,0 +1,533 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cours Développement Web : PHP : Les objets</title>
+        <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <h1>Notre application</h1>
+          <p>Durant nos précédente séances nous avons pu aborder :</p>
+          <ul>
+            <li>Le worflow type du développement d'une application (web)</li>
+            <li>Les bases de la création d'une base de données</li>
+            <li>Les premières bases de PHP</li>
+            <li>Le HTML et son design avec Bootstap</li>
+          </ul> 
+          <p>Il est maintenant temps de commencer à créer notre application de gestion d'élèves / modules / examens.</p>
+          <p>Le premier module que nous allons créer est le module de gestion des élèves.</p>
+          <p>La structure de table que nous adopterons : </p>
+          <h3>student</h3>
+          <table class="table">
+            <tr>
+              <td>id</td>
+              <td>int auto_increment primary key</td>
+            </tr>
+            <tr>
+              <td>firstName</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>lastName</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>birthDate</td>
+              <td>timestamp</td>
+            </tr>
+            <tr>
+              <td>cin</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>gsm</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>mail</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>address</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>zipCode</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>city</td>
+              <td>text</td>
+            </tr>
+          </table>
+          <p>Vous pouvez créer cette table avec la requête SQL : </p>
+            <code>CREATE TABLE student (id INT AUTO_INCREMENT PRIMARY KEY, firstName TEXT, lastName TEXT, birthDate timestamp, cin TEXT, gsm TEXT, mail TEXT, address TEXT, zipCode TEXT, city TEXT);</code>
+          <hr>
+          <h3>config.inc.php</h3>
+          <p>Durant tout notre projet nous nous connecterons à la base de données, nous utiliserons des paramètres qui seront communs à plusieurs classes.</p>
+          <p>Le fichier <code>libs/config.inc.php</code> contiendra des constantes qui seront réutilisées à plusieurs endroits de notre application.</p>
+          <code>
+            &lt;?php<br>
+              // Configuration de la base de données<br>
+              define('DB_LOGIN','root');<br>
+              define('DB_PASS','1234');<br>
+              define('DB_NAME','maBase');<br>
+              define('DB_HOST','localhost');<br>
+            ?&gt;
+          </code>
+          <hr>
+          <h3>error.inc.php</h3>
+          <p>Comme nous l'avons vu précédemment, les fonctions retournent des résultats. L'idéal est d'uniformiser les résultats pour ne pas avoir à se demander à chaque utilisation d'une de vos fonctions "mais que retourne-t-elle ?".</p>
+          <p>Nous allons créer une fonction <code>returnResponse()</code> qui nous renverra un tableau associatif : </p>
+          <ul>
+            <li>error : true si une erreur est survenue. false si pas d'erreur.</li>
+            <li>data : le message d'erreur si error === true. Les données sinon.</li>
+          </ul>
+          <p>Le fichier <code>libs/error.inc.php</code> contiendra : </p>
+          <code>
+            &lt;?php<br>
+              function returnResponse($error = false, $data = false){<br>
+                $myResponse = Array();
+                $myResponse['error'] = $error;
+                $myResponse['data'] = $data;
+
+                return $myResponse;
+              }<br>
+            ?&gt;
+          </code>
+          <hr>
+          <h3>db.inc.php</h3>
+          <p>Comme nous allons nous connecter à plusieurs reprises à la base de données nous allons créer une fonction générique qui và nous permettre de nous connecter facilement.</p>
+          <p>Le fichier <code>libs/db.inc.php</code> và contenir une deux fonctions : </p>
+          <ul>
+            <li>dbConnect() : connection à mySQL</li>
+            <li>dbDisconnect() : deconnection de mySQL</li>
+          </ul>
+          <code>
+            &lt;?php<br>
+              require_once('config.inc.php');<br>
+              <br>
+              function dbConnect(){<br>
+                &nbsp;&nbsp;&nbsp;return mysqli_connect(DB_HOST, DB_LOGIN, DB_PASS, DB_NAME);<br>
+              }<br>
+              <br>
+              function dbDisconnect($bdd = false){<br>
+                &nbsp;&nbsp;&nbsp;return mysqli_close($bdd);<br>
+              }<br>
+            ?&gt;
+          </code>
+          <hr>
+          <h3>student.class.php</h3>
+          <p>La classe student.class.php sera le seul code à interagir avec la base de données pour la gestion des élèves.</p>
+          <p>La classe student aura pour propriétés l'ensemble des champs de la base de données.</p>
+          <p>La classe student aura pour méthodes de base : </p>
+          <ul>
+            <li>__construct() : le constructeur qui và initialiser les propriétés de notre objet</li>
+            <li>save() : une fonction qui va faire les INSERT ou les UPDATE de la base de données</li>
+            <li>readRow() : une fonction qui nous transformera un résultat de base de données vers un objet student</li>
+            <li>getAll() : une fonction qui nous retournera un tableau de tous les student de la base</li>
+            <li>getById() : une fonction qui nous retournera un student à partir de son id</li>
+            <li>delete() : une fonction qui supprimera un student de la base à partir de son id</li>
+          </ul>
+          <code>
+            &lt;?php<br>
+              require_once('db.inc.php');<br>
+              require_once('error.inc.php');<br>
+              <br>
+              class student{<br>
+                &nbsp;&nbsp;&nbsp;var $id;<br>
+                &nbsp;&nbsp;&nbsp;var $firstName;<br>
+                &nbsp;&nbsp;&nbsp;var $lastName;<br>
+                &nbsp;&nbsp;&nbsp;var $birthDate;<br>
+                &nbsp;&nbsp;&nbsp;var $cin;<br>
+                &nbsp;&nbsp;&nbsp;var $gsm;<br>
+                &nbsp;&nbsp;&nbsp;var $mail;<br>
+                &nbsp;&nbsp;&nbsp;var $address;<br>
+                &nbsp;&nbsp;&nbsp;var $zipCode;<br>
+                &nbsp;&nbsp;&nbsp;var $city;<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function __construct(){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->id = false;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->firstName = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->lastName = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->birthDate = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->cin = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->gsm = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->mail = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->address = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->zipCode = '';<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this->city = '';<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;function save(){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(!isset($this)){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,"Object not instancied. Cannot save it !");<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bdd = dbConnect();<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($bdd === false)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Unable to connect to Database !');<br>
+                  <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($this->id === false){ // C'est une création<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql =  "INSERT INTO student VALUES("<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."0,"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->firstName)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->lastName)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->birthDate)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->cin)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->gsm)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->mail)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->address)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->zipCode)."',"<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."'".mysqli_real_escape_string($bdd,$this->city)."'"<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.")";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = mysqli_query($bdd, $sql);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($result === false)<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Error while executing creation request');<br>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,mysqli_insert_id($bdd));<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "UPDATE student SET "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."firstName = '".mysqli_real_escape_string($bdd,$this->firstName)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."lastName = '".mysqli_real_escape_string($bdd,$this->lastName)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."birthDate = '".mysqli_real_escape_string($bdd,$this->birthDate)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."cin = '".mysqli_real_escape_string($bdd,$this->cin)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."gsm = '".mysqli_real_escape_string($bdd,$this->gsm)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."mail = '".mysqli_real_escape_string($bdd,$this->mail)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."address = '".mysqli_real_escape_string($bdd,$this->address)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."zipCode = '".mysqli_real_escape_string($bdd,$this->zipCode)."', "<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."city = '".mysqli_real_escape_string($bdd,$this->city)."' "<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."WHERE id = ".mysqli_real_escape_string($bdd,$this->id);<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = mysqli_query($bdd, $sql);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($result === false)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Error while executing creation request');<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,mysqli_affected_rows($bdd));<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function readRow($row = false){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($row === false)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Missing parameter to readRow');<br>
+<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(trim($row['id']) !== ''){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$obj = new student();<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach($row as $key => $value){<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$obj->$key = $value;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $obj;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'No id provided to readRow');<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function getAll(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "SELECT * FROM student ORDER BY lastName";<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bdd = dbConnect();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = mysqli_query($bdd, $sql);<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$students = Array();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while($row = mysqli_fetch_assoc($result)){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$myRow = student::readRow($row);<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($myRow['error'] === false)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$students[] = $myRow['data'];<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,$students);<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function getById($id = false){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($id === false)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Missing parameter to getById');<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bdd = dbConnect();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "SELECT * FROM student WHERE id=".mysqli_real_escape_string($bdd,$id);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = mysqli_query($bdd, $sql);<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$students = Array();<br>
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while($row = mysqli_fetch_assoc($result)){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$myRow = student::readRow($row);<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($myRow['error'] === false)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$students[] = $myRow['data'];<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,$students);<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function delete($id = false){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($id === false)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Missing parameter to delete');<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bdd = dbConnect();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "DELETE FROM student WHERE id=".mysqli_real_escape_string($bdd,$id);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = mysqli_query($bdd, $sql);<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($result === false)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(true,'Error while deleting this student');<br>
+<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,mysqli_affected_rows($bdd));<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+            ?&gt;
+          </code>
+          <p>La classe est maintenant complète et va pouvoir être utilisée par notre application.</p>
+          <h3>Interface de listage des élèves</h3>
+          <p>Lors de notre séance précédente nous avons vu comment utiliser initializr pour démarrer une page HTML correcte. Nous allons créer l'interface qui và nous permettre de lister les élèves.</p>
+          <p>Cette page nous permettra également de modifier, supprimer ou créer un nouvel élève.</p>
+          <p>Créez un répertoire <code>modStudent</code> dans votre répertoire.</p>
+          <p>Dans <code>modStudent</code> copiez le fichier index.html de initializr</p>
+          <p>Dans la DIV <code>class="container"</code> remplacez le code exisant par le code suivant.</p>
+          <code>
+              &lt;div class="row"><br>
+                &nbsp;&nbsp;&nbsp;&lt;div class="col-md-8 col-md-offset-2"><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="page-header"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h1>Gestion des élèves&lt;/h1><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div><br>
+              &lt;/div><br>
+              &lt;div class="row" id="divListStudent"><br>
+                &nbsp;&nbsp;&nbsp;&lt;div class="col-md-8"><br>
+                  
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="btn btn-success" id="btnAddStudent">Ajouter&lt;/span><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;table><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;thead><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>Id&lt;/th><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>Nom&lt;/th><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>Prénom&lt;/th><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>GSM&lt;/th><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>Mail&lt;/th><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;th>Ville&lt;/th><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/thead><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tbody id="bodyStudentList"><br>
+<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tbody><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/table><br>
+                &nbsp;&nbsp;&nbsp;&lt;/div><br>
+              &lt;/div><br>
+          </code>
+
+          <p>Nous avons maintenant une page qui est capable d'accueillir la liste de nos élèves. Ces élèves sont stockés dans la base de données et nous savons que seul les classes peuvent accéder à la base.</p>
+          <p>Nous allons donc devoir créer le code intermédiaire qui fera la liaison entre nos classes et les données affichées dans les pages.</p>
+          <h3>Création du webservice : index.ws.php</h3>
+          <p>Le webservice sera le code qui accédera aux classes pour renvoyer des informations à la page.</p>
+          <p>Par convention, nous nommerons toujours le webservice relatif à une page .html le même nom mais avec l'extension <code>.ws.php</code></p>
+          <p>Notre webservice dans l'état actuel des choses contiendra une fonction nous permettant de ramener la liste de tous nos élèves.</p>
+          <code>
+            &lt;?php<br>
+              require_once('../libs/error.inc.php');<br>
+              require_once('../libs/student.class.php');<br>
+<br>
+              if(isset($_POST['action'])){<br>
+                &nbsp;&nbsp;&nbsp;switch($_POST['action']){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case "getAll":<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$students = student::getAll();<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo json_encode($students);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo json_encode(returnResponse(true,'Invalid action provided to webservice'));<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+                &nbsp;&nbsp;&nbsp;}<br>
+              }<br>
+<br>
+              echo json_encode(returnResponse(true,'Unable to initiliaze webservice'));<br>
+              return false;<br>
+            ?>
+          </code>
+          <p>Vous avez maintenant un webservice capable de vous retourner au format JSON un tableau d'objet <code>student</code></p>
+          <p>JSON est un format de balisage permettant de structurer des informations. On peut considérer JSON comme le successeur d'XML. JSON a une syntaxe plus simple et peut facilement être lu par de nombreux languages grâce à diverses librairies.</p>
+          <p>JSON est nativement géré par Javascript ce qui faciletera la communication entre notre page Web et le Webservice.</p>
+
+          <h3>Communication entre la page HTML et le Webservice : AJAX</h3>
+          <p>Nous avons maintenant une base de données avec une table <code>student</code> prête a accueillir des données</p>
+          <p>Nous avons une classe <code>student.class.php</code> étant notre seule interface avec la base de données et qui contient des fonctions comme l'insertion, la récupération et la suppression de données dans notre table <code>student</code>.</p> 
+          <p>Nous avons un fichier HTML <code>modStudent/index.html</code> qui va nous permettre d'afficher la liste des élèves ainsi que de lancer des opérations comme la création, la modification ou la suppression d'élèves.</p>
+          <p>Nous avons un webservice <code>modStudent/index.ws.php</code> qui pour l'instant contient une fonction permettrant de nous renvoyer l'ensemble des éléments présents dans la table <code>student</code></p>
+          <p>Nous devons maintenant faire communiquer notre page HTML avec notre webservice. Pour celà nous utiliserons le language Javascript qui sera notre "glue" entre le code PHP et la page HTML.</p>
+          <p>Javascript nous permet de faire de l'interactivité directement dans le navigateur sans avoir à faire de requêtes sur le serveur Web. On peut ainsi en Javascript créer des éléments dans la page, changer les styles ou bien encore faire apparaître / disparaître des éléments.</p>
+          <p>Dans notre cas ce sont les fonctions AJAX qui vont particulièrement nous interresser.</p>
+          <p>AJAX và nous permettre d'envoyer des requêtes à notre webservice, de recevoir la réponse puis de modifier notre page pour intégrer les résultat.</p>
+          <p>L'avantage des requêtes AJAX est qu'elles peuvent être asynchrones. Une requêtes asynchrone permet de ne pas bloquer le programme pendant qu'on attend la réponse du serveur. Lorsque le serveur renvoit une réponse un "callback" est déclenché.</p>
+          <p>Pour écrire plus facilement nous nous appuierons sur la librairies jQuery qui a été installée avec notre initializr.</p>
+          <p>A la fin de votre fichier <code>index.html</code> ajoutez : </p>
+          <code>
+            &lt;script language="javascript"><br>
+              &nbsp;&nbsp;&nbsp;$(document).ready(function(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getAll();<br>
+              &nbsp;&nbsp;&nbsp;});<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function getAll(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.post('index.ws.php',{action:"getAll"},function(data){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(data.error === true){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert('Une erreur est survenue : '+data.data);<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=0 ; i<data.data.length ; i++){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var tr = '&lt;tr> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].id+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].firstName+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].lastName+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].gsm+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].mail+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].city+'&lt;/td> \<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          &lt;/tr>';<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$('#bodyStudent').append(tr);<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},"json");<br>
+              &nbsp;&nbsp;&nbsp;}<br>
+            &lt;/script>
+          </code>
+          <p>En rechargeant la page vous devriez normalement voir la liste des élèves qui sont présents dans votre table <code>student</code></p>
+          <p>A ce niveau de code vous pouvez avoir plusieurs sources d'erreurs. Il faut bien imaginer le fonctionnement de votre page.</p>
+          <ol>
+            <li>La page HTML se charge et fait appel en AJAX a votre Webservice : debug avec firebug dans le navigateur</li>
+            <li>Le webservice recoit la requête et la traite : debug avec <code>/var/log/apache2/error.log</code></li>
+            <li>La classe interagi avec la base de données : debug avec <code>/var/log/apache2/error.log</code></li>
+            <li>La base de données traite les commandes SQL : debug avec <code>/var/log/mysql/</code></li>
+            <li>Le webservice renvoit les données en JSON à la page Web : debug avec firebug dans le navigateur</li>
+          </ol>
+          <h3>Création d'un élève</h3>
+          <p>Nous allons maintenant créer l'interface permettant de créer un élève.</p>
+          <p>Pour celà nous allons créer une nouvelle <code>div</code> dans la page index.html.</p>
+          <code>
+            &lt;div class="row"><br>
+             &nbsp;&nbsp;&nbsp; &lt;div class="col-md-8 col-md-offset-2"><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;table class="table"><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Prénom&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="firstName" name="firstName"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Nom&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="lastName" name="lastName"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Date de naissance (YYYY-MM-DD)&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="birthDate" name="birthDate"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>CIN&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="cin" name="cin"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Mail&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="mail" name="mail"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Adresse&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="address" name="address"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Code Postal&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="zipCode" name="zipCode"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td>Ville&lt;/td><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td><br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" class="form-control form-control-student" id="city" name="city"><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td colspan="2"><br>
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;span class="btn btnSuccess" id="btnSaveStudent">Enregistrer&lt;/span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/td><br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/table><br>
+              &nbsp;&nbsp;&nbsp;&lt;/div><br>
+            &lt;/div><br>
+          </code>
+          <p>Nous allons maintenant modifier le code javascript de la page index.html pour gérer la création de l'étudiant.</p>
+          <code>
+            &nbsp;&nbsp;&nbsp;$(document).ready(function(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getAll();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$('#btnSaveStudent').click(function(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;saveStudent();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+              &nbsp;&nbsp;&nbsp;});<br>
+<br>
+              &nbsp;&nbsp;&nbsp;function saveStudent(){<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var student = {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;firstName : $('#firstName').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastName : $('#lastName').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;birthDate : $('#birthDate').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cin : $('#cin').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gsm : $('#gsm').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mail : $('#mail').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;address : $('#address').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zipCode : $('#zipCode').val(),<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;city : $('#city').val()<br>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.post('index.ws.php',{action:"save",student:student},function(data){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(data.error === true){<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert('Une erreur est survenue : '+data.data);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.reload();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},"json");<br>
+              &nbsp;&nbsp;&nbsp;}
+          </code>
+          <p><a class="btn btn-primary btn-lg" href="bootstrap-2.html" role="button">Continuer &raquo;</a></p>
+        </div>
+      </div>
+
+
+      <script src="js/vendor/jquery-1.11.2.min.js"></script>
+      <script src="js/vendor/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
+</html>
