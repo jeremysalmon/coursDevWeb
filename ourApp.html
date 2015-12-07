@@ -101,6 +101,8 @@
           <p>Vous pouvez créer cette table avec la requête SQL : </p>
             <code>CREATE TABLE student (id INT AUTO_INCREMENT PRIMARY KEY, firstName TEXT, lastName TEXT, birthDate timestamp, cin TEXT, gsm TEXT, mail TEXT, address TEXT, zipCode TEXT, city TEXT);</code>
           <hr>
+          <h1 style="text-align:center">Nos librairies</h1>
+          <p>Pour nous faciliter le travail nous allons créer nos propres librairies. Celles-ci seront incluses (grâce à <code>require_once</code>) dans les différentes classes et webservice que nous allons créer par la suite.</p>
           <h3>config.inc.php</h3>
           <p>Durant tout notre projet nous nous connecterons à la base de données, nous utiliserons des paramètres qui seront communs à plusieurs classes.</p>
           <p>Le fichier <code>libs/config.inc.php</code> contiendra des constantes qui seront réutilisées à plusieurs endroits de notre application.</p>
@@ -125,11 +127,11 @@
           <code>
             &lt;?php<br>
               function returnResponse($error = false, $data = false){<br>
-                $myResponse = Array();
-                $myResponse['error'] = $error;
-                $myResponse['data'] = $data;
-
-                return $myResponse;
+                &nbsp;&nbsp;&nbsp;$myResponse = Array();<br>
+                &nbsp;&nbsp;&nbsp;$myResponse['error'] = $error;<br>
+                &nbsp;&nbsp;&nbsp;$myResponse['data'] = $data;<br>
+                <br>
+                &nbsp;&nbsp;&nbsp; $myResponse;
               }<br>
             ?&gt;
           </code>
@@ -155,6 +157,9 @@
             ?&gt;
           </code>
           <hr>
+          <h1 style="text-align:center">Notre classe</h1>
+          <p>La classe PHP <code>student.class.php</code> nous permettra de gérer des objets <code>student</code> facilement dans nos webservice. Une fois la classe développée, nous n'aurons plus à nous soucier de requêtes SQL ou de logique métier.</p>
+          <p>L'ensemble de la complexité métier sera gérer par la classe.</p>
           <h3>student.class.php</h3>
           <p>La classe student.class.php sera le seul code à interagir avec la base de données pour la gestion des élèves.</p>
           <p>La classe student aura pour propriétés l'ensemble des champs de la base de données.</p>
@@ -310,6 +315,9 @@
             ?&gt;
           </code>
           <p>La classe est maintenant complète et va pouvoir être utilisée par notre application.</p>
+          <hr>
+          <h1 style="text-align:center">Les interfaces : listage des élèves </h1>
+          <p>La première interface que nous allons développer est l'interface qui permettra de lister les élèves.</p>
           <h3>Interface de listage des élèves</h3>
           <p>Lors de notre séance précédente nous avons vu comment utiliser initializr pour démarrer une page HTML correcte. Nous allons créer l'interface qui và nous permettre de lister les élèves.</p>
           <p>Cette page nous permettra également de modifier, supprimer ou créer un nouvel élève.</p>
@@ -317,7 +325,7 @@
           <p>Dans <code>modStudent</code> copiez le fichier index.html de initializr</p>
           <p>Dans la DIV <code>class="container"</code> remplacez le code exisant par le code suivant.</p>
           <code>
-              &lt;div class="row"><br>
+              &lt;div class="row" ><br>
                 &nbsp;&nbsp;&nbsp;&lt;div class="col-md-8 col-md-offset-2"><br>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="page-header"><br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h1>Gestion des élèves&lt;/h1><br>
@@ -349,6 +357,9 @@
 
           <p>Nous avons maintenant une page qui est capable d'accueillir la liste de nos élèves. Ces élèves sont stockés dans la base de données et nous savons que seul les classes peuvent accéder à la base.</p>
           <p>Nous allons donc devoir créer le code intermédiaire qui fera la liaison entre nos classes et les données affichées dans les pages.</p>
+          <hr>
+          <h1 style="text-align:center">Le Webservice</h1>
+          <p>La page web de listage des élèves n'a pas le droit d'interagir directement avec la base de données. Ce rôle est dédié aux classes. Le webservice est l'interface entre les classes et les interfaces qui và nous permettre de traiter des demandes et de renvoyer des résultats.</p>
           <h3>Création du webservice : index.ws.php</h3>
           <p>Le webservice sera le code qui accédera aux classes pour renvoyer des informations à la page.</p>
           <p>Par convention, nous nommerons toujours le webservice relatif à une page .html le même nom mais avec l'extension <code>.ws.php</code></p>
@@ -377,7 +388,7 @@
             ?>
           </code>
           <p>Vous avez maintenant un webservice capable de vous retourner au format JSON un tableau d'objet <code>student</code></p>
-          <p>JSON est un format de balisage permettant de structurer des informations. On peut considérer JSON comme le successeur d'XML. JSON a une syntaxe plus simple et peut facilement être lu par de nombreux languages grâce à diverses librairies.</p>
+          <p><a href="https://fr.wikipedia.org/wiki/JavaScript_Object_Notation" target="_blank">JSON</a> est un format de balisage permettant de structurer des informations. On peut considérer JSON comme le successeur d'XML. JSON a une syntaxe plus simple et peut facilement être lu par de nombreux languages grâce à diverses librairies.</p>
           <p>JSON est nativement géré par Javascript ce qui faciletera la communication entre notre page Web et le Webservice.</p>
 
           <h3>Communication entre la page HTML et le Webservice : AJAX</h3>
@@ -427,11 +438,16 @@
             <li>La base de données traite les commandes SQL : debug avec <code>/var/log/mysql/</code></li>
             <li>Le webservice renvoit les données en JSON à la page Web : debug avec firebug dans le navigateur</li>
           </ol>
+          <hr>
+          <h1 style="text-align:center">Synoptique de fonctionnement</h1>
+          <img src="img/ourApp.svg" class="img-responsive">
+          <hr>
+          <h1 style="text-align:center">Interface : Création d'un élève</h1>
           <h3>Création d'un élève</h3>
           <p>Nous allons maintenant créer l'interface permettant de créer un élève.</p>
           <p>Pour celà nous allons créer une nouvelle <code>div</code> dans la page index.html.</p>
           <code>
-            &lt;div class="row"><br>
+            &lt;div class="row" style="display:none" id="divFormStudent"><br>
              &nbsp;&nbsp;&nbsp; &lt;div class="col-md-8 col-md-offset-2"><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;table class="table"><br>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tr><br>
@@ -520,6 +536,44 @@
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.reload();<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},"json");<br>
               &nbsp;&nbsp;&nbsp;}
+          </code>
+          <hr>
+          <h1 style="text-align:center">Javascript : Faire apparaître / disparaître le formulaire de création</h1>
+          <p>Notre prochaine étape và être d'afficher le formulaire de création d'un élève quand on clique sur le bouton qui possède l'id <code>btnAddStudent</code>.</p>
+          <p>Dans notre code Javascript <code>$(document).ready(...)</code> nous allons rajouter le code qui va attacher l'action d'affichage de la DIV <code>divFormStudent</code> quand on clique sur le bouton qui porte l'ID <code>btnAddStudent</code></p>
+          <img src="img/ourApp-2.svg" class="img-responsive">
+          <p>Dans <code>$(document).ready(function(){ .... });</code> ajouter : </p>
+          <code>
+            $('#btnAddStudent').click(function(){<br>
+              &nbsp;&nbsp;&nbsp;$('#divFormStudent').css('display','block');<br>
+            });
+          </code>
+          <p>Si vous rechargez la page et que vous cliquez sur le bouton <code>Ajouter</code> le formulaire devrait s'afficher.</p>
+          <hr>
+          <h1 style="text-align:center">Ajout de <code>save</code> au Webservice</h1>
+          <p>Notre webservice va recevoir une requête quand nous cliquerons sur le bouton <code>Enregistrer</code>. Mais pour l'instant l'action ne sera pas géré.</p>
+          <p>Nous devons créer une action <code>save</code> qui attendra un objet JSON en paramètre.</p>
+          <p>Le JSON recu sera utilisé pour instancier un objet <code>student</code> qui sera ensuite sauvegardé avec la méthode <code>save()</code>.</p>
+          <p>Dans le <code>switch</code> de <code>index.ws.php</code> ajoutez : </p>
+          <code>
+            case "save":<br>
+              &nbsp;&nbsp;&nbsp;if(!isset($_POST['student']))<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo json_encode(returnResponse(true,'Missing parameter to complete a save()'));<br>
+              <br>
+                &nbsp;&nbsp;&nbsp;$myStudent = new student();<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->firstName = $_POST['student']['firstName'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->lastName = $_POST['student']['lastName'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->birthDate = $_POST['student']['birthDate'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->cin = $_POST['student']['cin'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->gsm = $_POST['student']['gsm'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->mail = $_POST['student']['mail'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->address = $_POST['student']['address'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->zipCode = $_POST['student']['zipCode'];<br>
+                &nbsp;&nbsp;&nbsp;$myStudent->city = $_POST['student']['city'];<br>
+<br>
+                &nbsp;&nbsp;&nbsp;echo json_encode($myStudent->save());<br>
+              &nbsp;&nbsp;&nbsp;return true;<br>
+              &nbsp;&nbsp;&nbsp;break;<br>
           </code>
           <p><a class="btn btn-primary btn-lg" href="bootstrap-2.html" role="button">Continuer &raquo;</a></p>
         </div>
