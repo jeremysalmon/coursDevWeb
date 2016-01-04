@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Cours Développement Web : Comment fonctionne une application</title>
+        <title>Cours Développement Web</title>
         <meta name="description" content="Cours de téléphonie sur IP avec Asterisk">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -43,21 +43,23 @@
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="row">
-        <div class="col-md-6">
-          <img src="img/fonctionnement-1.svg" class="img-responsive">
-        </div>
-        <div class="col-md-6">
-          <h1>Comment fonctionne une application Web</h1>
-          <h2>Requête HTTP(s) du client (simplifié)</h2>
-          <hr>
-          <ul>
-            <li>Le port par défaut de HTTP est 80. Le port par défaut de HTTPS est 443.</li>
-            <li>En HTTPS les transaction entre le client et le serveur sont chiffrées grâce à un système de clés SSL.</li>
-            <li>Il existe de nombreux serveur Web : Apache, Nginx, IIS, …</li>
-            <li>L’interpréteur PHP peut être un module du serveur Web (ex : mod-php5 pour Apache) ou un service autonome (ex : php-fpm)</li>
-            <li>Il existe de nombreuses bases de données : PostgreSQL, MySQL, Oracle, SQL Server … La base de données est notre moyen de stocker les informations</li>
-          </ul>
-          <p><a class="btn btn-primary btn-lg" href="fonctionnement-2.html" role="button">Continuer &raquo;</a></p>
+        <div class="col-md-8 col-md-offset-2">
+          <h1>Gestion des inscriptions</h1>
+          <p>Vous avez maintenant des élèves dans la table <code>student</code>. Vous avez les modules dans la table <code>module</code>.</p>
+          <p>La prochaine étape và consister à créer l'interface qui và permettre d'"inscrire" un élève à un module.</p>
+          <img src="img/ourApp_Inscription_Student.svg" class="image-responsive">
+          <p>La relation entre un élève et un module est <code>1-n/1-n</code>. 1 élève peut être inscrit de 0 à x module et un module peut accueillir 0 à x student.</p>
+          <p>Une relation <code>1-n/1-n</code> se matérialise par une table. Nous nommerons cette table inscription.</p>
+          <p>Pour une inscription nous devrons au moins avec la date d'inscription. Nous vous laissons décider des autres champs dont vous pourriez avoir besoin.</p>
+          <p></p>
+          <p>Votre travail và consister à : </p>
+          <ol>
+            <li>Imaginer la structure de la table <code>inscription</code></li>
+            <li>Créer la table <code>inscription</code></li>
+            <li>Créer la classe <code>libs/inscription.class.php</code></li>
+            <li>Créer la page <code>inscription.php</code> et le webservice <code>inscription.ws.php</code>. Cette page devra lister l'ensemble des inscriptions existantes. Un bouton permettra de facilement supprimer une inscription. Un bouton permettra de créer une nouvelle inscription. Lors de cette création une liste déroulante (<code>select</code> en HTML) permettra de sélectionner l'élève. Une autre liste déroulante permettra de sélectionner le module. Si un élève est déjà inscrit au module, le webservice devra retourner cette information et ne pas créer une nouvelle inscription identique.</li>
+          </ol>
+          <p><a class="btn btn-primary btn-lg" href="ourApp-5.html" role="button">Continuer &raquo;</a></p>
         </div>
       </div>
 

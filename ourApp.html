@@ -36,7 +36,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">Cours Dev Web</a>
+            <a class="navbar-brand" href="sommaire.html">Cours Dev Web (Sommaire)</a>
           </div>
         </div>
       </nav>
@@ -230,7 +230,7 @@
                     <br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return returnResponse(false,mysqli_insert_id($bdd));<br>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                &nbsp;&nbsp;&nbsp;}<br>
+
                 <br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$sql = "UPDATE student SET "<br>
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;."firstName = '".mysqli_real_escape_string($bdd,$this->firstName)."', "<br>
@@ -414,7 +414,7 @@
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(data.error === true){<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert('Une erreur est survenue : '+data.data);<br>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=0 ; i<data.data.length ; i++){<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=0 ; i&lt;data.data.length ; i++){<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var tr = '&lt;tr> \<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].id+'&lt;/td> \<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            &lt;td>'+data.data[i].firstName+'&lt;/td> \<br>
@@ -575,7 +575,7 @@
               &nbsp;&nbsp;&nbsp;return true;<br>
               &nbsp;&nbsp;&nbsp;break;<br>
           </code>
-          <p><a class="btn btn-primary btn-lg" href="bootstrap-2.html" role="button">Continuer &raquo;</a></p>
+          <p><a class="btn btn-primary btn-lg" href="ourApp-2.html" role="button">Continuer &raquo;</a></p>
         </div>
       </div>
 
